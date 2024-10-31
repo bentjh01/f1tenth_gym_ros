@@ -50,5 +50,17 @@ RUN source /opt/ros/foxy/setup.bash && \
     rosdep install -i --from-path src --rosdistro foxy -y && \
     colcon build
 
+# Create quick start script
+RUN cd sim_ws && \
+    echo "source /opt/ros/foxy/setup.bash" >> start.sh && \
+    echo "source install/setup.bash" >> start.sh && \
+    echo "ros2 launch f1tenth_gym_ros gym_bridge_launch.py" >> start.sh && \
+    chmod +x start.sh
+
+# Change map
+RUN cd sim_ws/src/config && \
+    sed -i 's/levine/Spielberg_map/g' sim.yaml && \
+    colcon build
+
 WORKDIR '/sim_ws'
 ENTRYPOINT ["/bin/bash"]
